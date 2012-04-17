@@ -1,0 +1,24 @@
+--- fas/inet/pool.hpp	(revision 470)
++++ fas/inet/pool.hpp	(working copy)
+@@ -61,8 +61,11 @@
+ 
+   void release()
+   {
+-    typename mutex_type::scoped_lock sl( _mutex );
+-    _release();
++	{
++      typename mutex_type::scoped_lock sl( _mutex );
++      _release();
++    }
++    process_free();
+   }
+   
+   void clear_pooled() {
+@@ -205,7 +208,6 @@
+   {
+     std::for_each(_pooled.begin(), _pooled.end(), releaser());
+     std::for_each(_active.begin(), _active.end(), releaser());
+-    _process_free();
+   }
+ 
+ };
