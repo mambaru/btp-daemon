@@ -141,7 +141,8 @@ function get_something_from_database($parameters) {
 
 Программа-демон разработана в [компании "Мамба"][4] и распространяется по лицензии GNU GPL ver. 2.  Web-интерфейс разработан в [компании "Мамба"][4] и распространяется по лицензии MIT.
 Разработчик - [Илья Шаповалов][5]. В демоне используются следующие библиотеки:
- - faslib - GPL2. (c) [Владимир Мигашко][7]
+
+- faslib - GPL2. (c) [Владимир Мигашко][7]
  - kyoto cabinet - GPL3 + Foss License Exception. (c) [FAL Labs][6]
  - intel tbb - GPL2. (c) Intel
  - boost: Boost License. 
