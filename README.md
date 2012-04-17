@@ -3,7 +3,13 @@
 BTP - система для анализа производительности веб-приложений.
 Идея такая: веб-приложение замеряет время выполнения каких-то интересных участков кода (например, запросы к базе/кэшу/внешним сервисам) и сообщает это время BTP. BTP обрабатывает эти данные и выводит статистику в интерфейсе. При этом для измерения времени используется обычный код на вашем языке программирования, без обязательного использования каких-либо native extensions, поэтому, хотя мы используем BTP из PHP, но тем не менее BTP можно использовать с любоым языком программирования.
 
-# Требования
+Ссылки на все части проекта:
+
+ - http://github.com/mambaru/btp-daemon/ - демон
+ - http://github.com/mambaru/btp-webui/ - веб-интерфейс
+ - http://github.com/mambaru/btp-api/ - апи
+
+## Требования
 
  - [Kyoto Cabinet][1]
  - [Intel Threading Building Blocks][2] 
@@ -16,14 +22,14 @@ BTP - система для анализа производительности 
     http://fallabs.com/kyotocabinet/pkg/
     http://threadingbuildingblocks.org/file.php?fid=77
 
-# Установка демона
+## Установка демона
 
     git clone git://github.com/mambaru/btp-daemon.git
     cd btp-daemon
     make all
     ./release/daemon --help
 
-# Установка веб-интерфейса
+## Установка веб-интерфейса
 	
 	git clone git://github.com/mambaru/btp-webui.git
 	
@@ -135,7 +141,7 @@ function get_something_from_database($parameters) {
 
 Программа-демон разработана в [компании "Мамба"][4] и распространяется по лицензии GNU GPL ver. 2.  Web-интерфейс разработан в [компании "Мамба"][4] и распространяется по лицензии MIT.
 Разработчик - [Илья Шаповалов][5]. В демоне используются следующие библиотеки:
-
+ - faslib - GPL2. (c) [Владимир Мигашко][7]
  - kyoto cabinet - GPL3 + Foss License Exception. (c) [FAL Labs][6]
  - intel tbb - GPL2. (c) Intel
  - boost: Boost License. 
@@ -149,4 +155,5 @@ function get_something_from_database($parameters) {
   [4]: http://corp.mamba.ru/
   [5]: http://github.com/shepik/
   [6]: http://fallabs.com/
-  
+  [7]: code.google.com/p/faslib/
+
