@@ -3,7 +3,13 @@
 BTP - система для анализа производительности веб-приложений.
 Идея такая: веб-приложение замеряет время выполнения каких-то интересных участков кода (например, запросы к базе/кэшу/внешним сервисам) и сообщает это время BTP. BTP обрабатывает эти данные и выводит статистику в интерфейсе. При этом для измерения времени используется обычный код на вашем языке программирования, без обязательного использования каких-либо native extensions, поэтому, хотя мы используем BTP из PHP, но тем не менее BTP можно использовать с любоым языком программирования.
 
-# Требования
+Ссылки на все части проекта:
+
+ - http://github.com/mambaru/btp-daemon/ - демон
+ - http://github.com/mambaru/btp-webui/ - веб-интерфейс
+ - http://github.com/mambaru/btp-api/ - апи
+
+## Требования
 
  - [Kyoto Cabinet][1]
  - [Intel Threading Building Blocks][2] 
@@ -16,14 +22,14 @@ BTP - система для анализа производительности 
     http://fallabs.com/kyotocabinet/pkg/
     http://threadingbuildingblocks.org/file.php?fid=77
 
-# Установка демона
+## Установка демона
 
     git clone git://github.com/mambaru/btp-daemon.git
     cd btp-daemon
     make all
     ./release/daemon --help
 
-# Установка веб-интерфейса
+## Установка веб-интерфейса
 	
 	git clone git://github.com/mambaru/btp-webui.git
 	
