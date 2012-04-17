@@ -92,12 +92,11 @@ struct BtpDaemonData {
 	}
 
 	void roll(time_t ts) {
-		std::cout << "roll beg: " << microtime_str() << std::endl;
+		if (LOG_VERBOSITY>=1) std::cout << "roll beg: " << microtime_str() << std::endl;
 		auto p1 = stat_service_server_op.roll(ts);
 		auto p2 = stat_script_service_op.roll(ts);
 		ts_roll = ts;
-		std::cout << "roll end: " << microtime_str() << std::endl;
-		//std::cout << "2-2-6: " << (*stat_service_server_op.get_last())[intkey<3>{2,2,6}].data.size() << std::endl;
+		if (LOG_VERBOSITY>=1) std::cout << "roll end: " << microtime_str() << std::endl;
 		if (p1!=NULL) delete p1;
 		if (p2!=NULL) delete p2;
 	}
@@ -105,16 +104,12 @@ struct BtpDaemonData {
 	void aggregate(time_t ts) {
 		//while (ts_roll<=ts+5) usleep(100000);
 
-		std::cout << "aggregate beg: " << ts << " @ " << microtime_str() << std::endl;
+		if (LOG_VERBOSITY>=1) std::cout << "aggregate beg: " << ts << " @ " << microtime_str() << std::endl;
 		std::thread thr1 = std::thread([this,ts](){
 			set_my_scheduler(SCHED_IDLE,0);
 			auto ret = stat_service_server_op.run_aggregation(ts);
 			{
-				//std::lock_guard<std::mutex> lck(mtx);
 				for (auto it = ret.begin();it!=ret.end();it++) {
-					//if (!c_service_server.has(it->first.data[0],it->first.data[1])) {
-					//	std::cout << "adding: " << d_service.get_name(it->first.data[0]) << " => " << d_server.get_name(it->first.data[1]) << std::endl;
-					//}
 					c_service_server.add(it->first.data[0],it->first.data[1]);
 					c_service_op.add(it->first.data[0],it->first.data[2]);
 				}
@@ -133,6 +128,6 @@ struct BtpDaemonData {
 
 		thr1.join();
 		thr2.join();
-		std::cout << "aggregate end: " << ts << " @ " << microtime_str() << std::endl;
+		if (LOG_VERBOSITY>=1) std::cout << "aggregate end: " << ts << " @ " << microtime_str() << std::endl;
 	}
 };

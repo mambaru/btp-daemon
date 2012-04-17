@@ -367,13 +367,14 @@ struct get_warnings {
 							(d1.perc80 > (long long int)(1000+d2.perc95*1.5F))
 							|| (d1.perc80 > (long long int)(100+d2.perc99*1.4F))
 						)) {
-							if (scriptSearch) {
-								std::cout << "w: " << data->d_script.rev[i0] << "-" << data->d_service.rev[i1] << "-" << data->d_op.rev[i2];
-							} else {
-								std::cout << "w: " << data->d_service.rev[i0] << "-" << data->d_server.rev[i1] << "-" << data->d_op.rev[i2];
+							if (LOG_VERBOSITY>=1) {
+								if (scriptSearch) {
+									std::cout << "w: " << data->d_script.rev[i0] << "-" << data->d_service.rev[i1] << "-" << data->d_op.rev[i2];
+								} else {
+									std::cout << "w: " << data->d_service.rev[i0] << "-" << data->d_server.rev[i1] << "-" << data->d_op.rev[i2];
+								}
+								std::cout << d1.perc80 << " vs " << d2.perc95 << std::endl;
 							}
-							std::cout << d1.perc80 << " vs " << d2.perc95 << std::endl;
-
 							res.insert(srch==0?i0: (srch==1?i1:i2));
 							r1.free();
 							r2.free();

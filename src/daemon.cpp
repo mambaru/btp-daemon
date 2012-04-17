@@ -1,4 +1,6 @@
 #define MYMYSQL_DEBUG 0
+#define LOG_VERBOSITY 0
+
 #include <boost/program_options.hpp>
 namespace po = ::boost::program_options;
 #include <iostream>
@@ -89,9 +91,10 @@ int main (int argc, char **argv) {
 
 	gopt.add_options()
 		("help,h", "show help message" )
+		("daemonize,d", "daemonize" )
 		("log,l", po::value<std::string>(&log_file),"log file" )
 		("port,p", po::value<int>(&port)->default_value(22400),"port number" )
-		("threads,t", po::value<int>(&thread_count)->default_value(6),"number of threads" )
+		("threads,t", po::value<int>(&thread_count)->default_value(3),"number of threads" )
 		("path", po::value<std::string>(&path)->default_value(""),"path to store database" )
 	;
 	options.add(gopt);
@@ -110,6 +113,18 @@ int main (int argc, char **argv) {
     }
 
     std::cout << vm << std::endl;
+
+    if (log_file.length()) {
+        std::freopen(log_file.c_str(), "a+", stderr);
+        std::freopen(log_file.c_str(), "a+", stdout);
+        std::cout << vm << std::endl;
+    }
+
+
+    if (vm.count("daemonize")) {
+    	common::daemonize(log_file.length()?true:false,log_file.length()?true:false);
+    }
+
 
 	fas::system::dumpable();
 	if (path.length()) {
