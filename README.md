@@ -18,7 +18,7 @@ BTP - система для анализа производительности 
  - CMake
 
 В Gentoo нужно установить dev-db/kyotocabinet, dev-cpp/tbb, dev-libs/boost, dev-util/cmake
-В Debian: libtbb2, libtbb-dev, libboost-dev, cmake и из исходников kyotocabinet
+В Debian: libtbb2, libtbb-dev, libboost-dev, libboost-thread-dev libboost-program-options-dev, cmake и уже из исходников kyotocabinet
   
     http://fallabs.com/kyotocabinet/pkg/
     http://threadingbuildingblocks.org/file.php?fid=77
