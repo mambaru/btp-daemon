@@ -14,10 +14,11 @@ BTP - система для анализа производительности 
  - [Kyoto Cabinet][1]
  - [Intel Threading Building Blocks][2] 
  - GCC 4.5+
+ - Boost
  - CMake
 
-В Gentoo нужно установить dev-db/kyotocabinet, dev-cpp/tbb
-В Debian: libtbb2, libtbb-dev и из исходников kyotocabinet
+В Gentoo нужно установить dev-db/kyotocabinet, dev-cpp/tbb, dev-libs/boost, dev-util/cmake
+В Debian: libtbb2, libtbb-dev, libboost-dev, cmake и из исходников kyotocabinet
   
     http://fallabs.com/kyotocabinet/pkg/
     http://threadingbuildingblocks.org/file.php?fid=77
