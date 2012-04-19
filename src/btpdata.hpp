@@ -35,9 +35,9 @@ struct BtpDaemonData {
 	codictionary c_service_server;
 	codictionary c_script_service;
 
-	BtpDaemonData(std::string path) :
-		stat_service_server_op(path,"service_dsrv_op")
-		,stat_script_service_op(path,"script_service_op")
+	BtpDaemonData(std::string path, int tune) :
+		stat_service_server_op(path,"service_dsrv_op", tune)
+		,stat_script_service_op(path,"script_service_op", tune)
 		,d_op(path,"dict_op")
 		,d_service(path,"dict_service")
 		,d_server(path,"dict_dsrv")

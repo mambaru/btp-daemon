@@ -49,7 +49,7 @@ void set_my_scheduler(int policy, int param) {
 
 #include "fas_queries.hpp"
 #include "btpdata.hpp"
-BtpDaemonData *data;
+std::unique_ptr<BtpDaemonData> data;
 volatile bool is_running;
 #include "fas_methods.hpp"
 
@@ -88,6 +88,7 @@ int main (int argc, char **argv) {
 	std::string path;
 	int port;
 	int thread_count;
+	int tune;
 
 	gopt.add_options()
 		("help,h", "show help message" )
@@ -96,6 +97,7 @@ int main (int argc, char **argv) {
 		("port,p", po::value<int>(&port)->default_value(22400),"port number" )
 		("threads,t", po::value<int>(&thread_count)->default_value(3),"number of threads" )
 		("path", po::value<std::string>(&path)->default_value(""),"path to store database" )
+		("tune", po::value<int>(&tune)->default_value(64),"tuning parameter, it (as a multiplier) affects size of mmaped regions and initial kyoto hashmap size. Mamba uses 1024" )
 	;
 	options.add(gopt);
 
@@ -130,7 +132,7 @@ int main (int argc, char **argv) {
 	if (path.length()) {
 		if (*path.rbegin() != '/') path.append("/");
 	}
-	data = new BtpDaemonData(path);
+	data = std::unique_ptr<BtpDaemonData>(new BtpDaemonData(path,tune));
 	is_running = true;
 
 	//тред, который сбрасывает секундные данные о счётчиках

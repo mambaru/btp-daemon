@@ -46,7 +46,7 @@ struct RoundRobinPeriodicalStorage {
 		storage30m.remove<ord>(key_ord);
 		storage6h.remove<ord>(key_ord);
 	}
-	RoundRobinPeriodicalStorage(std::string path, std::string name) : name(name) {
+	RoundRobinPeriodicalStorage(std::string path, std::string name, int tune = 1024) : name(name) {
 		current_data = new map_type();
 		second_data.resize(second_data_size, NULL);
 
@@ -55,10 +55,10 @@ struct RoundRobinPeriodicalStorage {
 		storage30m.init(30*60,3000,true);
 		storage6h.init(6*3600,3000,false);
 
-		storage5s.open(path + name+"_5s");
-		storage1m.open(path + name+"_1m");
-		storage30m.open(path + name+"_30m");
-		storage6h.open(path + name+"_6h");
+		storage5s.open(path + name+"_5s", tune);
+		storage1m.open(path + name+"_1m", tune);
+		storage30m.open(path + name+"_30m", tune);
+		storage6h.open(path + name+"_6h", tune);
 
 		std::cout << "loaded intkeymap<" << N << ">: " << name << std::endl;
 	}

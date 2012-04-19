@@ -13,7 +13,7 @@ struct dictionary {
 
 	dictionary (std::string path,std::string name) {
 		db = new kc::HashDB();
-		db->open(path + name+".kch", kyotocabinet::HashDB::OREADER | kyotocabinet::HashDB::OWRITER | kyotocabinet::HashDB::OCREATE);
+		db->open(path + name+".kch", kyotocabinet::HashDB::OREADER | kyotocabinet::HashDB::OAUTOSYNC | kyotocabinet::HashDB::OWRITER | kyotocabinet::HashDB::OCREATE);
 		kyotocabinet::HashDB::Cursor *cur = db->cursor();
 		cur->jump();
 		std::string ckey, cvalue;
@@ -30,6 +30,9 @@ struct dictionary {
 		for (auto it=data.begin();it!=data.end();it++) rev[it->second] = it->first;
 
 		std::cout << "loaded dictionary " << name << std::endl;
+	}
+	~dictionary() {
+		db->close();
 	}
 	int get(const std::string &val, bool allow_add = true) {
 		lck.lock_r();

@@ -36,12 +36,12 @@ struct RoundRobinStorage {
 	void open(std::string name,int tune = 1024) {
 		db_data = new kc::HashDB();
 		bdb_data = new BufferedKC<kc::HashDB>(db_data);
-		db_data->tune_buckets(300000);
+		db_data->tune_buckets(300*tune);
 		db_data->tune_map(512*tune*1024);
 		db_data->open(name+"_data.kch", kyotocabinet::HashDB::OREADER | kyotocabinet::HashDB::OWRITER | kyotocabinet::HashDB::OCREATE);
 		db_meta = new kc::HashDB();
 		bdb_meta = new BufferedKC<kc::HashDB>(db_meta);
-		db_meta->tune_buckets(300000);
+		db_meta->tune_buckets(300*tune);
 		db_meta->tune_map(16*tune*1024);
 		db_meta->open(name+"_meta.kch", kyotocabinet::HashDB::OREADER | kyotocabinet::HashDB::OWRITER | kyotocabinet::HashDB::OCREATE);
 
