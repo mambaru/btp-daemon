@@ -247,8 +247,8 @@ int main (int argc, char **argv) {
 	thr_aggregate.join();
 	thr_sync.join();
 	thr_tcp.join();
-	for (int i=0;i<thread_count;i++) thrudp[i]->join();
-
+	for (int i=0;i<thread_count;i++) thrudp[i]->detach();
+	sleep(1);
 	data->close();
     return 0;
 }

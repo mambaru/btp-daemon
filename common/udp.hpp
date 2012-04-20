@@ -53,7 +53,7 @@ namespace common {
 		{
 			int optval, rc; socklen_t optlen = sizeof(optval);
 			_udp = asi::socket(asi::IPv4, asi::UDP );
-		    if (_nonblock) asi::nonblock( _udp );
+		    //if (_nonblock) asi::nonblock( _udp );
 			optval =  16777216;
 			rc = ::setsockopt(_udp, SOL_SOCKET, SO_RCVBUF, &optval, optlen);
 			if (rc < 0)
