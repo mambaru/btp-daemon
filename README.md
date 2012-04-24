@@ -9,6 +9,11 @@ BTP - система для анализа производительности 
  - http://github.com/mambaru/btp-webui/ - веб-интерфейс
  - http://github.com/mambaru/btp-api/ - апи
 
+![обращения ко всем серверам мемкэша](http://i.imgur.com/kiY0H.png)
+
+Посмотреть больше картинок: http://imgur.com/a/idFF6
+
+
 # Установка и настройка
 
 ## Требования
