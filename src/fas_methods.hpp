@@ -17,20 +17,26 @@ struct delete_op {
 
 	template<typename T> bool request(T& t, const btprequest::get_graph& cmd,int id, bool &result) {
 		result = false;
-
-		if (cmd.service.length()) {
+		if (cmd.op.length() && cmd.service.length()) {
+			int val1 = data->d_service.remove(cmd.service);
+			if (val1 == -1) return true;
+			int val2 = data->d_op.remove(cmd.op);
+			if (val2 == -1) return true;
+			data->c_service_op.remove12(val1,val2);
+			data->stat_service_server_op.remove(intkey<3>{{val1,0,val2}});
+		} else if (cmd.service.length()) {
 			int val = data->d_service.remove(cmd.service);
 			if (val == -1) return true;
 			data->c_script_service.remove2(val);
 			data->c_service_op.remove1(val);
 			data->c_service_server.remove1(val);
-			data->stat_service_server_op.remove<0>(val);
-			data->stat_script_service_op.remove<1>(val);
+			data->stat_service_server_op.remove(intkey<3>{{val,0,0}});
+			data->stat_script_service_op.remove(intkey<3>{{0,val,0}});
 		} else if (cmd.script.length()) {
 			int val = data->d_script.remove(cmd.script);
 			if (val == -1) return true;
 			data->c_script_service.remove1(val);
-			data->stat_script_service_op.remove<0>(val);
+			data->stat_script_service_op.remove(intkey<3>{{val,0,0}});
 		} else return false;
 		result = true;
 		return true;

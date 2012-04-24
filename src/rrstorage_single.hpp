@@ -53,17 +53,20 @@ struct RoundRobinStorage {
 		}
 		std::cout << "loaded " << name << std::endl;
 	}
-	template<int ord>
-	void remove(int key_ord) {
+
+	void remove(key_type key) {
+		bool b = false;
+		for (int i=0;i<N;i++) if (key.data[i]>0) b = true;
+		if (!b) return;
+
 		kyotocabinet::HashDB::Cursor *cur = db_meta->cursor();
 		cur->jump();
 		std::string ckey;
 		while (cur->get_key(&ckey, true)) {
 			int *val = (int*)ckey.data();
-			if (val[ord]==key_ord) {
-				db_meta->remove(ckey);
-				db_data->remove(ckey);
-			}
+			for (int i=0;i<N;i++) if (key.data[i]>0 && key.data[i]!=val[i]) continue;
+			db_meta->remove(ckey);
+			db_data->remove(ckey);
 		}
 		delete cur;
 	}

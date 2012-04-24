@@ -4,6 +4,9 @@ template<int N>
 struct intkey {
 	int data[N];
 
+	void clear() {
+		for (int i=0;i<N;i++) data[i] = 0;
+	}
 	bool operator==(const intkey<N> &other) const {
 		for (int i=0;i<N;i++) if (data[i]!=other.data[i]) return false;
 		return true;

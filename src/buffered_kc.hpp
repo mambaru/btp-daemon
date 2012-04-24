@@ -1,5 +1,7 @@
 #pragma once
 
+#include "kc_setbulk.hpp"
+
 /**
  * буферизирующая обёртка над kyoto tycoon
  * снижает нагрузку на IO-подсистему
@@ -17,9 +19,13 @@ struct BufferedKC {
 
 	void _sync(const std::unordered_map<std::string,std::string> &data) {
 		ts = time(0);
-		for (auto it = data.begin();it!=data.end();it++) {
+		kc::HashDB t;
+		//t.set_bulk()
+		set_bulk(db,data);
+		//db->set_bulk(data);
+		/*for (auto it = data.begin();it!=data.end();it++) {
 			db->set(it->first,it->second);
-		}
+		}*/
 	}
 	bool set(const char* kbuf, size_t ksiz, const char* vbuf, size_t vsiz) {
 		std::string s_key (kbuf,ksiz);

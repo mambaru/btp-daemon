@@ -152,7 +152,7 @@ int main (int argc, char **argv) {
 		while (is_running) {
 			ts++;
 			double uts = microtime();
-			if (uts-ts<270) {
+			if (uts-ts<RoundRobinPeriodicalStorage<3>::second_data_size-60-15) {
 				while (microtime() < ts) usleep(std::max(100000,(int)((microtime()-ts)*500000)));	//sleep half of time - for precision
 				while (is_running && !data->is_aggregation_allowed(ts)) usleep(100000);
 				if (!is_running) break;

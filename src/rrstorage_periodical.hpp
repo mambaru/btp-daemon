@@ -39,12 +39,11 @@ struct RoundRobinPeriodicalStorage {
 		storage6h.close();
 	}
 
-	template<int ord>
-	void remove(int key_ord) {
-		storage5s.remove<ord>(key_ord);
-		storage1m.remove<ord>(key_ord);
-		storage30m.remove<ord>(key_ord);
-		storage6h.remove<ord>(key_ord);
+	void remove(key_type key) {
+		storage5s.remove(key);
+		storage1m.remove(key);
+		storage30m.remove(key);
+		storage6h.remove(key);
 	}
 	RoundRobinPeriodicalStorage(std::string path, std::string name, int tune = 1024) : name(name) {
 		current_data = new map_type();
