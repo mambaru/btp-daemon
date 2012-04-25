@@ -18,10 +18,10 @@ struct delete_op {
 	template<typename T> bool request(T& t, const btprequest::get_graph& cmd,int id, bool &result) {
 		result = false;
 		if (cmd.op.length() && cmd.service.length()) {
-			int val1 = data->d_service.remove(cmd.service);
-			if (val1 == -1) return true;
-			int val2 = data->d_op.remove(cmd.op);
-			if (val2 == -1) return true;
+			int val1 = data->d_service.get(cmd.service,false);
+			if (val1<=0) return true;
+			int val2 = data->d_op.get(cmd.op,false);
+			if (val2<=0) return true;
 			data->c_service_op.remove12(val1,val2);
 			data->stat_service_server_op.remove(intkey<3>{{val1,0,val2}});
 		} else if (cmd.service.length()) {
