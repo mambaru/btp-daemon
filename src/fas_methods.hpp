@@ -24,6 +24,13 @@ struct delete_op {
 			if (val2<=0) return true;
 			data->c_service_op.remove12(val1,val2);
 			data->stat_service_server_op.remove(intkey<3>{{val1,0,val2}});
+		} else if (cmd.server.length() && cmd.service.length()) {
+			int val1 = data->d_service.get(cmd.service,false);
+			if (val1<=0) return true;
+			int val2 = data->d_server.get(cmd.server,false);
+			if (val2<=0) return true;
+			data->c_service_server.remove12(val1,val2);
+			data->stat_service_server_op.remove(intkey<3>{{val1,val2,0}});
 		} else if (cmd.service.length()) {
 			int val = data->d_service.remove(cmd.service);
 			if (val == -1) return true;

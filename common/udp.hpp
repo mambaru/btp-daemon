@@ -34,12 +34,18 @@ namespace common {
 		typedef int desc_type;
 		typedef am::imux<desc_type> imux;
 
+		static const int buffer_size_socket = 16777216;
+		static const int buffer_size = 1024*1024;
+
 		desc_type _udp;
-		char _buffer[8192];
+		std::unique_ptr<char> _buffer;
 		fas::system::inet::address_t _local_address;////typedef std::vector<unsigned char> address_t;
 		struct sockaddr_in _remote_address;
 		imux* _mux;
 		bool _nonblock;
+
+//		server_udp() {
+	//	}
 
 		void set_mux(imux *mux) { _mux = mux; }
 		void set_nonblock(bool value = true)  { _nonblock = value; }
@@ -48,13 +54,15 @@ namespace common {
 		void start_on_same_socket(const T& t) {
 			_udp = t._udp;
 			if (_mux) _mux->set_rhandler( _udp, this);
+			//_buffer.reserve(buffer_size);
+			_buffer = std::unique_ptr<char>(new char[buffer_size]);
 		}
 		void start(const std::string& addr, unsigned short port)
 		{
 			int optval, rc; socklen_t optlen = sizeof(optval);
 			_udp = asi::socket(asi::IPv4, asi::UDP );
-		    //if (_nonblock) asi::nonblock( _udp );
-			optval =  16777216;
+		    if (_nonblock) asi::nonblock( _udp );
+			optval =  buffer_size_socket;
 			rc = ::setsockopt(_udp, SOL_SOCKET, SO_RCVBUF, &optval, optlen);
 			if (rc < 0)
 			{
@@ -69,8 +77,10 @@ namespace common {
 		virtual void ready_read( desc_type d)
 		{
 			socklen_t fromlen = sizeof(_remote_address);
-			size_t s = ::recvfrom(_udp, _buffer, sizeof(_buffer), 0, (sockaddr*)&_remote_address, &fromlen );
-			this->get_aspect().template get<af::_on_read_>()( *this, _buffer, s);//call ad_set ad_get
+			size_t s = ::recvfrom(_udp, _buffer.get(), buffer_size, 0, (sockaddr*)&_remote_address, &fromlen );
+			if (s!=static_cast<size_t>(-1)) {
+				this->get_aspect().template get<af::_on_read_>()( *this, _buffer.get(), s);//call ad_set ad_get
+			}
 		}
 		void _udp_write( const char* d, size_t s )
 		{

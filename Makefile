@@ -1,6 +1,6 @@
 all: release
 
-.PHONY: all release err oneerr clean
+.PHONY: all release err oneerr clean debug
 
 debug:
 	mkdir -p debug; cd debug && cmake -DCMAKE_BUILD_TYPE=debug -G "Unix Makefiles" -Wdev .. && make -j1

@@ -64,9 +64,12 @@ struct RoundRobinStorage {
 		std::string ckey;
 		while (cur->get_key(&ckey, true)) {
 			int *val = (int*)ckey.data();
-			for (int i=0;i<N;i++) if (key.data[i]>0 && key.data[i]!=val[i]) continue;
-			db_meta->remove(ckey);
-			db_data->remove(ckey);
+			b = true;
+			for (int i=0;i<N;i++) if (key.data[i]>0 && key.data[i]!=val[i]) {b = false; break;}
+			if (b) {
+				db_meta->remove(ckey);
+				db_data->remove(ckey);
+			}
 		}
 		delete cur;
 	}
