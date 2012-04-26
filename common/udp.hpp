@@ -73,6 +73,8 @@ namespace common {
 			_local_address = asi::create_address(addr, port, asi::IPv4 );
 			asi::bind(_udp, _local_address);
 			if (_mux) _mux->set_rhandler( _udp, this);
+			_buffer = std::unique_ptr<char>(new char[buffer_size]);
+
 		}
 		virtual void ready_read( desc_type d)
 		{
