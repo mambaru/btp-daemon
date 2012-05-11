@@ -89,6 +89,7 @@ int main (int argc, char **argv) {
 	int port;
 	int thread_count;
 	int tune;
+	int synctime;
 
 	gopt.add_options()
 		("help,h", "show help message" )
@@ -98,6 +99,7 @@ int main (int argc, char **argv) {
 		("threads,t", po::value<int>(&thread_count)->default_value(3),"number of threads" )
 		("path", po::value<std::string>(&path)->default_value(""),"path to store database" )
 		("tune", po::value<int>(&tune)->default_value(64),"tuning parameter, it (as a multiplier) affects size of mmaped regions and initial kyoto hashmap size. Mamba uses 1024" )
+		("synctime", po::value<int>(&synctime)->default_value(30), "period to sync to disk")
 	;
 	options.add(gopt);
 
@@ -165,11 +167,11 @@ int main (int argc, char **argv) {
 	});
 
 	//тред, который сохраняет данные на диск
-	std::thread thr_sync = std::thread([]{
+	std::thread thr_sync = std::thread([synctime]{
 		set_my_scheduler(SCHED_IDLE,0);
 		int cnt = 0;
 		while (is_running) {
-			if (!(cnt%30)) {
+			if (!(cnt%synctime)) {
 				std::cout << "sync: " << time(0) << std::endl;
 				data->sync();
 			}
