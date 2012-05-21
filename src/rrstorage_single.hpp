@@ -153,8 +153,7 @@ struct RoundRobinStorage {
 	}
 
 	template<typename T>
-	void save_aggregated(const T &t, time_t ts, bool res) {
-		if (!res) return;
+	void save_aggregated(const T &t, time_t ts) {
 		for (auto it = t.begin();it!=t.end();it++) {
 			this->save(it->first,ts,it->second);
 			if (do_save_last_data) last_data[it->first] = it->second;

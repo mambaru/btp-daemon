@@ -72,31 +72,27 @@ struct RoundRobinPeriodicalStorage {
 
 	aggregated_type run_aggregation(time_t ts) {
 		aggregated_type ret;
-		{
-			bool res = false;
-			ret = this->aggregate_sub(res,storage5s.scale_ts, ts);
-			if (res) storage5s.save_aggregated(ret,ts,res);
+		if (this->is_aggregate_allowed(storage5s.scale_ts, ts)){
+			ret = this->aggregate_sub(storage5s.scale_ts, ts);
+			storage5s.save_aggregated(ret,ts);
 		}
-		bool res1m = false;
-		{
-			aggregated_type t = this->aggregate_sub(res1m,storage1m.scale_ts, ts);
-			if (res1m) storage1m.save_aggregated(t,ts,res1m);
+		if (this->is_aggregate_allowed(storage1m.scale_ts, ts)) {
+			aggregated_type t = this->aggregate_sub(storage1m.scale_ts, ts);
+			storage1m.save_aggregated(t,ts);
 		}
-		if (res1m) {
+		if (this->is_aggregate_allowed(storage30m.scale_ts, ts)) {
 			if (longaggregation) {
 				longaggregation->join();
 				delete longaggregation;
 			}
 			longaggregation = new std::thread([this,ts](){
-				{
-					bool res = false;
-					aggregated_type t = this->aggregate_sup(res,this->storage30m.scale_ts, ts);
-					if (res) this->storage30m.save_aggregated(t,ts,res);
+				if (this->is_aggregate_allowed(storage30m.scale_ts, ts)) {
+					aggregated_type t = this->aggregate_sup(this->storage30m.scale_ts, ts);
+					this->storage30m.save_aggregated(t,ts);
 				}
-				{
-					bool res = false;
-					aggregated_type t = this->aggregate_sup(res,this->storage6h.scale_ts, ts);
-					if (res) this->storage6h.save_aggregated(t,ts,res);
+				if (this->is_aggregate_allowed(storage6h.scale_ts, ts)) {
+					aggregated_type t = this->aggregate_sup(this->storage6h.scale_ts, ts);
+					this->storage6h.save_aggregated(t,ts);
 				}
 			});
 		}
@@ -115,14 +111,19 @@ struct RoundRobinPeriodicalStorage {
 		return ptr;
 	}
 
+	bool is_aggregate_allowed(int period_sec, int ts) {
+		aggregated_type result;
+		if ((ts+1)%period_sec) return false;
+		return true;
+	}
+
 	/**
 	 * берёт часть статистики с детализацией до запроса и агрегирует её
 	 */
-	aggregated_type aggregate_sub(bool &res, int period_sec, int ts) {
+	aggregated_type aggregate_sub(int period_sec, int ts) {
 		aggregated_type result;
 		assert((second_data_size%period_sec)==0);
-		if ((ts+1)%period_sec) { res = false; return result;}
-		res = true;
+		assert((ts+1)%period_sec);
 
 		map_type tmp;
 		int second_ts = (ts)%second_data_size;
@@ -144,11 +145,10 @@ struct RoundRobinPeriodicalStorage {
 	/**
 	 * берёт агрегированную статистику и агрегирует её в более крупные куски
 	 */
-	aggregated_type aggregate_sup(bool &res, int period_sec, int ts) {
+	aggregated_type aggregate_sup(int period_sec, int ts) {
 		aggregated_type result;
 		assert((period_sec%60)==0);
-		if ((ts+1)%period_sec) { res = false; return result;}
-		res = true;
+		assert((ts+1)%period_sec);
 
 		int agr_count = period_sec/ (period_sec <= storage30m.scale_ts ? storage5s.scale_ts : storage1m.scale_ts);
 

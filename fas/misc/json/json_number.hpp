@@ -112,7 +112,7 @@ namespace detail
     template<typename P>
     P operator()( T v, P end)
     {
-       return serialize(v, end);
+       return this->serialize(v, end);
     };
 
     template<typename P>
@@ -124,7 +124,7 @@ namespace detail
          return parser::parse_null(beg, end);
        }
 
-       return unserialize(v, beg, end);
+       return this->unserialize(v, beg, end);
     };
   };
 }

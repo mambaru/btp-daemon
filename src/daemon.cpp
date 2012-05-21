@@ -121,6 +121,10 @@ int main (int argc, char **argv) {
     if (log_file.length()) {
         std::freopen(log_file.c_str(), "a+", stderr);
         std::freopen(log_file.c_str(), "a+", stdout);
+		std::cout.rdbuf()->pubsetbuf(0,0);
+		setbuf(stdout,NULL);
+		std::cerr.rdbuf()->pubsetbuf(0,0);
+		setbuf(stderr,NULL);
         std::cout << vm << std::endl;
     }
 
