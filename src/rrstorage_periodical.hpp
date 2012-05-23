@@ -86,11 +86,11 @@ struct RoundRobinPeriodicalStorage {
 				delete longaggregation;
 			}
 			longaggregation = new std::thread([this,ts](){
-				if (this->is_aggregate_allowed(storage30m.scale_ts, ts)) {
+				if (this->is_aggregate_allowed(this->storage30m.scale_ts, ts)) {
 					aggregated_type t = this->aggregate_sup(this->storage30m.scale_ts, ts);
 					this->storage30m.save_aggregated(t,ts);
 				}
-				if (this->is_aggregate_allowed(storage6h.scale_ts, ts)) {
+				if (this->is_aggregate_allowed(this->storage6h.scale_ts, ts)) {
 					aggregated_type t = this->aggregate_sup(this->storage6h.scale_ts, ts);
 					this->storage6h.save_aggregated(t,ts);
 				}
