@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bgthreads.hpp"
+
 /**
  * хранилище для счётчиков, обертка над несколькими RoundRobinStorage с разбивкой по временным периодам
  */
@@ -25,13 +27,13 @@ struct RoundRobinPeriodicalStorage {
 		storage30m.sync();
 		storage6h.sync();
 	}
-	std::thread *longaggregation;
+
+	bgthreads longaggregation;
+	bgthreads minaggregation;
+
 	void stop() {
-		if (longaggregation!=0) {
-			longaggregation->join();
-			delete longaggregation;
-			longaggregation = 0;
-		}
+		longaggregation.stop();
+		minaggregation.stop();
 		sync();
 		storage5s.close();
 		storage1m.close();
@@ -70,6 +72,23 @@ struct RoundRobinPeriodicalStorage {
 		}
 	}
 
+	/*вспомогательные штуки для обеспечения синхронизации записи минутных данных*/
+	std::mutex min_mtx;
+	std::list<int> min_values;
+	void push_min_values_front(int ts) {
+		std::lock_guard<std::mutex> lck(min_mtx);
+		min_values.push_back(ts);
+	}
+	void drop_min_values_front() {
+		std::lock_guard<std::mutex> lck(min_mtx);
+		min_values.pop_front();
+	}
+	int get_min_values_front() {
+		std::lock_guard<std::mutex> lck(this->min_mtx);
+		assert(min_values.size());
+		return min_values.front();
+	}
+
 	aggregated_type run_aggregation(time_t ts) {
 		aggregated_type ret;
 		if (this->is_aggregate_allowed(storage5s.scale_ts, ts)){
@@ -77,24 +96,29 @@ struct RoundRobinPeriodicalStorage {
 			storage5s.save_aggregated(ret,ts);
 		}
 		if (this->is_aggregate_allowed(storage1m.scale_ts, ts)) {
-			aggregated_type t = this->aggregate_sub(storage1m.scale_ts, ts);
-			storage1m.save_aggregated(t,ts);
+			minaggregation.clean(second_data_size/storage1m.scale_ts - 1);
+			this->push_min_values_front(ts);
+			minaggregation.push(new std::thread([this,ts](){
+				set_my_scheduler(SCHED_IDLE,0);
+				aggregated_type t = this->aggregate_sub(this->storage1m.scale_ts, ts);
+				while (this->get_min_values_front() != ts) usleep(100000);
+				this->storage1m.save_aggregated(t,ts);
+				this->drop_min_values_front();
+			}));
 		}
 		if (this->is_aggregate_allowed(storage30m.scale_ts, ts)) {
-			if (longaggregation) {
-				longaggregation->join();
-				delete longaggregation;
-			}
-			longaggregation = new std::thread([this,ts](){
-				if (this->is_aggregate_allowed(this->storage30m.scale_ts, ts)) {
+			longaggregation.clean(0);
+			longaggregation.push(new std::thread([this,ts](){
+				set_my_scheduler(SCHED_IDLE,0);
+				if (this->is_aggregate_allowed(storage30m.scale_ts, ts)) {
 					aggregated_type t = this->aggregate_sup(this->storage30m.scale_ts, ts);
 					this->storage30m.save_aggregated(t,ts);
 				}
-				if (this->is_aggregate_allowed(this->storage6h.scale_ts, ts)) {
+				if (this->is_aggregate_allowed(storage6h.scale_ts, ts)) {
 					aggregated_type t = this->aggregate_sup(this->storage6h.scale_ts, ts);
 					this->storage6h.save_aggregated(t,ts);
 				}
-			});
+			}));
 		}
 		return ret;
 	}
@@ -123,7 +147,7 @@ struct RoundRobinPeriodicalStorage {
 	aggregated_type aggregate_sub(int period_sec, int ts) {
 		aggregated_type result;
 		assert((second_data_size%period_sec)==0);
-		assert((ts+1)%period_sec);
+		assert((ts+1)%period_sec==0);
 
 		map_type tmp;
 		int second_ts = (ts)%second_data_size;
@@ -148,7 +172,7 @@ struct RoundRobinPeriodicalStorage {
 	aggregated_type aggregate_sup(int period_sec, int ts) {
 		aggregated_type result;
 		assert((period_sec%60)==0);
-		assert((ts+1)%period_sec);
+		assert((ts+1)%period_sec==0);
 
 		int agr_count = period_sec/ (period_sec <= storage30m.scale_ts ? storage5s.scale_ts : storage1m.scale_ts);
 
@@ -177,7 +201,6 @@ struct RoundRobinPeriodicalStorage {
 
 
 	map_type* get_last() {
-		//if (second_current<0) return 0;
 		return second_data[second_current];
 	}
 

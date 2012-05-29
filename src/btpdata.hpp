@@ -88,11 +88,11 @@ struct BtpDaemonData {
 
 	volatile int ts_roll;
 	bool is_aggregation_allowed(time_t ts) {
-		return ts_roll > ts+5;
+		return ts < ts_roll - 5;
 	}
 
 	void roll(time_t ts) {
-		if (LOG_VERBOSITY>=1) std::cout << "roll beg: " << microtime_str() << std::endl;
+		if (LOG_VERBOSITY>=1) std::cout << "roll beg: " << microtime_str() << " for " << ts << std::endl;
 		auto p1 = stat_service_server_op.roll(ts);
 		auto p2 = stat_script_service_op.roll(ts);
 		ts_roll = ts;
@@ -108,21 +108,16 @@ struct BtpDaemonData {
 		std::thread thr1 = std::thread([this,ts](){
 			set_my_scheduler(SCHED_IDLE,0);
 			auto ret = stat_service_server_op.run_aggregation(ts);
-			{
-				for (auto it = ret.begin();it!=ret.end();it++) {
-					c_service_server.add(it->first.data[0],it->first.data[1]);
-					c_service_op.add(it->first.data[0],it->first.data[2]);
-				}
+			for (auto it = ret.begin();it!=ret.end();it++) {
+				c_service_server.add(it->first.data[0],it->first.data[1]);
+				c_service_op.add(it->first.data[0],it->first.data[2]);
 			}
 		});
 		std::thread thr2 = std::thread([this,ts](){
 			set_my_scheduler(SCHED_IDLE,0);
 			auto ret = stat_script_service_op.run_aggregation(ts);
-			{
-				//std::lock_guard<std::mutex> lck(mtx);
-				for (auto it = ret.begin();it!=ret.end();it++) {
-					c_script_service.add(it->first.data[0],it->first.data[1]);
-				}
+			for (auto it = ret.begin();it!=ret.end();it++) {
+				c_script_service.add(it->first.data[0],it->first.data[1]);
 			}
 		});
 

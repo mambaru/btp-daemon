@@ -141,6 +141,7 @@ struct RoundRobinStorage {
 
 	void save(const key_type &key, int ts, const aggregated_counter &counter) {
 		if (counter.count==0) return;
+		if (!bdb_meta) return;
 		datameta_pair datameta = get<true>(key,ts);
 		datameta.data[datameta.meta->ind] = counter;
 
@@ -148,7 +149,6 @@ struct RoundRobinStorage {
 		size_t ksz = N*sizeof(key.data[0]);
 		bdb_meta->set(kstr,ksz,(char*)datameta.meta,sizeof(meta_t));
 		bdb_data->set(kstr,ksz,(char*)datameta.data,sizeof(aggregated_counter)*count);
-
 		datameta.free();
 	}
 

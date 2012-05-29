@@ -14,7 +14,7 @@ struct counter {
 		data.push_back(ts);
 	}
 	void add(const counter &other) {
-		data.reserve(data.size()+other.data.size());
+		//data.reserve(data.size()+other.data.size());
 		for (size_t i=0;i<other.data.size();i++) data.push_back(other.data[i]);
 	}
 };

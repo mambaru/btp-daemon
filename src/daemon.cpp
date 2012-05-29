@@ -147,7 +147,7 @@ int main (int argc, char **argv) {
 		set_my_scheduler(SCHED_FIFO,10);
 		while (is_running) {
 			ts++;
-			while (microtime() < ts) usleep(std::max(1000,(int)((microtime()-ts)*500000)));	//sleep half of time - for precision
+			while (microtime() < ts) usleep(std::max(10000,(int)((microtime()-ts)*500000)));
 			data->roll(ts);
 		}
 	});
@@ -155,6 +155,7 @@ int main (int argc, char **argv) {
 	//тред, который обсчитывает статистику
 	std::thread thr_aggregate = std::thread([]{
 		time_t ts = time(0);
+		set_my_scheduler(SCHED_IDLE,0);
 		while (is_running) {
 			ts++;
 			double uts = microtime();

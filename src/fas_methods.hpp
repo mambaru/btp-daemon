@@ -72,6 +72,7 @@ struct put {
 	template<typename T> void notify(T& t, const btprequest::script_data& cmd) {
 		auto curr1 = data->stat_service_server_op.get_current();
 		auto curr2 = data->stat_script_service_op.get_current();
+		//if (curr1==NULL || curr2==NULL) return;
 
 		int n_script = data->d_script.get(cmd.script);
 		for (auto it_service = cmd.items.begin(),end_service = cmd.items.end();it_service!=end_service;++it_service) {
@@ -97,10 +98,10 @@ struct put {
 						//std::lock_guard<std::mutex> lck(data.mtx);
 						auto &c1 = data->stat_service_server_op.get_current(key1,curr1);
 						auto &c2 = data->stat_script_service_op.get_current(key2,curr2);
-						if (cmd.replace) {
+						/*if (false && cmd.replace) {
 							c1.data.clear();
 							c2.data.clear();
-						}
+						}*/
 						for (auto it = it_op->second.begin(),end_it = it_op->second.end();it!=end_it;++it) {
 							c1.add(*it);
 							c2.add(*it);
@@ -156,7 +157,7 @@ struct get_list_advanced {
 
 //			auto &stat = data->stat_script_service_op.storage30m.last_data.size()?data->stat_script_service_op.storage30m.last_data:data->stat_script_service_op.storage1m.last_data;
 			auto &stat = data->stat_script_service_op.storage30m.last_data;
-			for (unsigned int val_script = 1;val_script<data->d_script.data.size();val_script++) {
+			for (int val_script = 1;val_script<(int)data->d_script.data.size();val_script++) {
 				auto stat_it = stat.find(intkey<3>{{val_script,val1,val2}});
 				if (stat_it != stat.end() && stat_it->second.count>0) {
 					outdata.push_back(std::pair<unsigned int,aggregated_counter>(val_script, stat_it->second));
@@ -171,7 +172,7 @@ struct get_list_advanced {
 			vect = &data->d_server.rev;
 
 			auto &stat = data->stat_service_server_op.storage30m.last_data;
-			for (unsigned int val_server = 1;val_server < data->d_server.data.size();val_server++) {
+			for (int val_server = 1;val_server < (int)data->d_server.data.size();val_server++) {
 				auto stat_it = stat.find(intkey<3>{{val1,val_server,val2}});
 				if (stat_it != stat.end() && stat_it->second.count>0) {
 					outdata.push_back(std::pair<unsigned int,aggregated_counter>(val_server, stat_it->second));
@@ -257,7 +258,7 @@ struct get_list {
 				if (val2 == -1) return true;
 				std::vector<std::pair<int,long long int>> script_count;
 				//auto &scripts= data->d_script.rev;
-				for (unsigned int val_script = 1;val_script<data->d_script.data.size();val_script++) {
+				for (int val_script = 1;val_script<(int)data->d_script.data.size();val_script++) {
 					auto &stat = data->stat_script_service_op.storage30m.last_data;
 					auto stat_it = stat.find(intkey<3>{{val_script,val1,val2}});
 					if (stat_it != stat.end() && stat_it->second.count>0) {
