@@ -1,3 +1,4 @@
 *.kch
 release/
 debug/
+.project

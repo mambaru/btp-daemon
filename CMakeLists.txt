@@ -22,7 +22,8 @@ include_directories(.)
 
 add_executable(daemon src/daemon.cpp common/params.cpp)
 
-target_link_libraries(daemon pthread boost_program_options z tbb boost_thread kyotocabinet)
+# Если вдруг boost_thread-mt не будет найдена, попробуйте заменить на boost_thread  - зависит от версии буста
+target_link_libraries(daemon pthread boost_program_options z tbb boost_thread-mt kyotocabinet)
 
 #set_property(TARGET daemon APPEND PROPERTY LINK_FLAGS "-L/home/shepik/misc/lib/")
 

@@ -19,7 +19,7 @@ struct RoundRobinPeriodicalStorage {
 	std::vector<map_type *>second_data;
 	int second_current;
 
-	static const int second_data_size = 300;
+	static const int second_data_size = 240;
 
 	void sync() {
 		storage5s.sync();
@@ -50,6 +50,8 @@ struct RoundRobinPeriodicalStorage {
 	RoundRobinPeriodicalStorage(std::string path, std::string name, int tune = 1024) : name(name) {
 		current_data = new map_type();
 		second_data.resize(second_data_size, NULL);
+		second_current = 0;
+		for (int i=0;i<second_data_size;i++) second_data[i] = new map_type();
 
 		storage5s.init(5,3000,false);
 		storage1m.init(60,3000,false);
@@ -126,7 +128,7 @@ struct RoundRobinPeriodicalStorage {
 	map_type* roll(int ts) {
 		map_type* ptr = new map_type();
 		{
-//			std::lock_guard<spinlock> lck(mtx);
+			std::lock_guard<spinlock> lck(mtx);
 			std::swap(ptr,current_data);
 		}
 
