@@ -22,6 +22,7 @@ namespace po = ::boost::program_options;
 #include <fas/mux/epoller.hpp>
 
 #include "common/misc.hpp"
+#include "common/handle_unhandled.hpp"
 
 namespace as = ::fas::system;
 namespace asi = ::fas::system::inet;
@@ -49,7 +50,7 @@ void set_my_scheduler(int policy, int param) {
 
 #include "fas_queries.hpp"
 #include "btpdata.hpp"
-std::unique_ptr<BtpDaemonData> data;
+BtpDaemonData* data;
 volatile bool is_running;
 #include "fas_methods.hpp"
 
@@ -128,7 +129,6 @@ int main (int argc, char **argv) {
         std::cout << vm << std::endl;
     }
 
-
     if (vm.count("daemonize")) {
     	common::daemonize(log_file.length()?true:false,log_file.length()?true:false);
     }
@@ -138,7 +138,7 @@ int main (int argc, char **argv) {
 	if (path.length()) {
 		if (*path.rbegin() != '/') path.append("/");
 	}
-	data = std::unique_ptr<BtpDaemonData>(new BtpDaemonData(path,tune));
+	data = new BtpDaemonData(path,tune);
 	is_running = true;
 
 	//тред, который сбрасывает секундные данные о счётчиках
@@ -257,5 +257,6 @@ int main (int argc, char **argv) {
 	for (int i=0;i<thread_count;i++) thrudp[i]->detach();
 	sleep(1);
 	data->close();
+	delete data;
     return 0;
 }
