@@ -22,7 +22,6 @@ namespace po = ::boost::program_options;
 #include <fas/mux/epoller.hpp>
 
 #include "common/misc.hpp"
-#include "common/handle_unhandled.hpp"
 
 namespace as = ::fas::system;
 namespace asi = ::fas::system::inet;
