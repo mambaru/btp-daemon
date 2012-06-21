@@ -89,7 +89,7 @@ struct dictionary {
 		int v = it->second;
 		if (v==-1) return -1;
 		rev[v] = "";
-		data[val] = -1;
+		data.erase(val);
 		db->remove(val.c_str(),val.size());
 		return v;
 	}
