@@ -64,7 +64,7 @@ struct BtpDaemonData {
 				std::string ckey;
 				while (cur->get_key(&ckey, true)) {
 					int* k = (int*)ckey.data();
-					c_script_service.add(k[0],k[1]);
+					if (k[0]>0 && k[1]>0) c_script_service.add(k[0],k[1]);
 				}
 				delete cur;
 			};
@@ -116,7 +116,7 @@ struct BtpDaemonData {
 		std::thread thr2 = std::thread([this,ts](){
 			set_my_scheduler(SCHED_IDLE,0);
 			auto ret = stat_script_service_op.run_aggregation(ts);
-			for (auto it = ret.begin();it!=ret.end();it++) {
+			for (auto it = ret.begin();it!=ret.end();it++) if (it->first.data[0]>0 && it->first.data[1]>0) {
 				c_script_service.add(it->first.data[0],it->first.data[1]);
 			}
 		});
