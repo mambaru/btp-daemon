@@ -19,7 +19,7 @@ namespace po = ::boost::program_options;
 
 #include "common/params.h"
 #include "common/lock_atomic.hpp"
-#include <fas/mux/epoller.hpp>
+#include <fas/mux/best_mux.hpp>
 
 #include "common/misc.hpp"
 
@@ -38,13 +38,14 @@ namespace aj = ::fas::json;
 #include <tbb/concurrent_unordered_map.h>
 #include <tbb/concurrent_vector.h>
 
+#define SCHED_IDLE 0
 void set_my_scheduler(int policy, int param) {
-	sched_param p = {param};
+/*	sched_param p = {param};
 	int val = sched_setscheduler(pthread_self(), policy, &p);
 	if (!val) return;
 	if (val==EINVAL) std::cout << "sched_setscheduler: EINVAL\n";
 	if (val==EPERM) std::cout << "sched_setscheduler: EPERM\n";
-	if (val==ESRCH) std::cout << "sched_setscheduler: ESRCH\n";
+	if (val==ESRCH) std::cout << "sched_setscheduler: ESRCH\n";*/
 }
 
 #include "fas_queries.hpp"

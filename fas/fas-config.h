@@ -68,7 +68,7 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if you have the <sys/epoll.h> header file. */
-#define HAVE_SYS_EPOLL_H 1
+/* #undef HAVE_SYS_EPOLL_H */
 
 /* Define to 1 if you have the <sys/file.h> header file. */
 #define HAVE_SYS_FILE_H 1
@@ -80,7 +80,7 @@
 #define HAVE_SYS_PARAM_H 1
 
 /* Define to 1 if you have the <sys/prctl.h> header file. */
-#define HAVE_SYS_PRCTL_H 1
+/* #undef HAVE_SYS_PRCTL_H */
 
 /* Define to 1 if you have the <sys/select.h> header file. */
 #define HAVE_SYS_SELECT_H 1
@@ -118,8 +118,8 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #define HAVE__BOOL 1
 
-/* Define to 1 if you have the file `AC_File'. */
-#define HAVE__USR_INCLUDE_BOOST_THREAD_HPP 1
+/* Define to 1 if you have the file `/usr/include/boost/thread.hpp'. */
+/* #undef HAVE__USR_INCLUDE_BOOST_THREAD_HPP */
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT ""

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sys/times.h>
-#include <malloc.h>
+//#include <malloc.h>
 #include <dirent.h>
 #include <list>
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
@@ -84,7 +84,7 @@ template<int pos, typename L> void _method_statistics( L, const ::fas::misc::com
 static void _memory_statistics(std::ostringstream &str) {
 	char *vmsize = NULL;
 	char *vmrss = NULL;
-
+/*
 	char *line = (char*)malloc(1024);
 	size_t len = 1024;
 
@@ -105,7 +105,7 @@ static void _memory_statistics(std::ostringstream &str) {
 	}
 	fclose(f);
 
-	/* Get rid of " kB\n"*/
+	// Get rid of " kB\n"
 	len = strlen(vmsize);
 	vmsize[len - 4] = 0;
 	len = strlen(vmrss);
@@ -114,6 +114,7 @@ static void _memory_statistics(std::ostringstream &str) {
 
 	free(vmsize);
 	free(vmrss);
+  */
 }
 
 #ifdef __GXX_EXPERIMENTAL_CXX0X__
